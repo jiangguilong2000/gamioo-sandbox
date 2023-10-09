@@ -7,8 +7,9 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.github.houbb.data.factory.core.util.DataUtil;
 import io.fury.Fury;
-import io.fury.Language;
 
+
+import io.fury.config.Language;
 import io.gamioo.sandbox.util.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,11 +64,11 @@ public class ProtoSerializeBenchMark {
     }
     @Benchmark
     public byte[] furySerialize() {
-        return fury.serialize(skillFire_s2C_msg);
+        return fury.serializeJavaObject(skillFire_s2C_msg);
     }
     @Benchmark
     public byte[] furySerializeWithClassRegistrationAndNumberCompressed() {
-        return furyX.serialize(skillFire_s2C_msg);
+        return furyX.serializeJavaObject(skillFire_s2C_msg);
     }
     @Benchmark
     public byte[] jsonSerialize() {

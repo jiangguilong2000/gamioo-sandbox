@@ -7,7 +7,7 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.github.houbb.data.factory.core.util.DataUtil;
 import io.fury.Fury;
-import io.fury.Language;
+import io.fury.config.Language;
 import io.gamioo.sandbox.util.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +63,7 @@ public class ProtoDeserializeBenchMark {
                 .withRefTracking(true).requireClassRegistration(false).build();
 
         furyX = Fury.builder().withLanguage(Language.JAVA)
-                .withRefTracking(false).requireClassRegistration(true).withNumberCompressed(true).build();
+                .withRefTracking(false).requireClassRegistration(false).withNumberCompressed(true).build();
         furyX.register(SkillFire_S2C_Msg.class);
         furyX.register(SkillCategory.class);
         furyX.register(HarmDTO.class);

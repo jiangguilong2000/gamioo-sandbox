@@ -19,8 +19,8 @@ version = 'SNAPSHOT';
 /**
  * 绑定编译和运行的jdk版本1.8
  */
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 11
+targetCompatibility = 11
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -94,11 +94,11 @@ dependencies {
     api 'org.apache.commons:commons-lang3:3.11';
     // utils collection
     api 'org.apache.commons:commons-collections4:4.4';
-    api 'org.furyio:fury-core:0.1.0'
+    api 'org.furyio:fury-core:0.2.0'
     api group: 'io.protostuff', name: 'protostuff-core', version: '1.8.0'
     api group: 'io.protostuff', name: 'protostuff-runtime', version: '1.8.0'
     api group: 'com.carrotsearch', name: 'java-sizeof', version: '0.0.5'
-    api group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.37';
+    api group: 'com.alibaba.fastjson2', name: 'fastjson2', version: '2.0.41';
     api 'com.github.houbb:data-factory-core:1.2.0'
     // Use JUnit Jupiter API for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
@@ -106,7 +106,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.jmockit:jmockit:1.49'
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
+    api 'com.google.guava:guava:32.1.2-jre'
     // 保证jmh目录下java代码能顺利import其他main目录下等代码
     jmhImplementation project
     jmhImplementation 'org.openjdk.jmh:jmh-core:1.24'
