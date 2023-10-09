@@ -74,7 +74,6 @@ artifacts {
 }
 
 
-
 dependencies {
     // log
     api 'org.apache.logging.log4j:log4j-api:2.17.0';
@@ -82,6 +81,7 @@ dependencies {
     api 'org.apache.logging.log4j:log4j-web:2.17.0';
     api 'org.slf4j:slf4j-api:1.7.30';
     api 'com.lmax:disruptor:3.4.4';
+    api group: 'com.google.guava', name: 'guava', version: '32.1.1-jre';
     // 桥接：告诉slf4j使用Log4j2
     api 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.0';
     // 桥接：告诉commons logging使用Log4j2
@@ -106,7 +106,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.jmockit:jmockit:1.49'
     // This dependency is used by the application.
-    api 'com.google.guava:guava:32.1.2-jre'
+
     // 保证jmh目录下java代码能顺利import其他main目录下等代码
     jmhImplementation project
     jmhImplementation 'org.openjdk.jmh:jmh-core:1.24'
