@@ -106,7 +106,6 @@ public class ProtoTest {
     @Order(3)
     public void handleFurySerialize() {
         bytes = fury.serializeJavaObject(skillFire_s2C_msg);
-
         long size = RamUsageEstimator.sizeOf(skillFire_s2C_msg);
         //   logger. info(bytes.length);
         // String size2 = RamUsageEstimator.humanReadableUnits(size);
