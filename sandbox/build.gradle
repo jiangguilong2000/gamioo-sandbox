@@ -103,7 +103,7 @@ dependencies {
     api 'org.apache.commons:commons-lang3:3.11';
     // utils collection
     api 'org.apache.commons:commons-collections4:4.4';
-    api 'org.furyio:fury-core:0.2.0'
+    api 'org.furyio:fury-core:0.3.1'
     api group: 'io.protostuff', name: 'protostuff-core', version: '1.8.0'
     api group: 'io.protostuff', name: 'protostuff-runtime', version: '1.8.0'
     api group: 'com.carrotsearch', name: 'java-sizeof', version: '0.0.5'
