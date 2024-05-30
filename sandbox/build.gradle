@@ -106,9 +106,9 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.jmockit:jmockit:1.49'
 //    // This dependency is used by the application.
-    jmhImplementation 'com.google.guava:guava:32.0.0-jre'
-    jmhImplementation 'com.google.guava:failureaccess:1.0.1'
-    jmhImplementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    api 'com.google.guava:guava:32.0.0-jre'
+    api 'com.google.guava:failureaccess:1.0.1'
+    api 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     // 保证jmh目录下java代码能顺利import其他main目录下等代码
     jmhImplementation project
     jmhImplementation 'org.openjdk.jmh:jmh-core:1.24'
