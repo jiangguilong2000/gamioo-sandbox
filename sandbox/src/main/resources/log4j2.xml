@@ -27,13 +27,13 @@
         </Logger>
         <Logger name="org.apache.http" level="warn">
         </Logger>
+        <Logger name="org.apache.fury.codegen" level="warn">
+        </Logger>
         <Logger name="org.apache.commons" level="warn">
         </Logger>
         <Logger name="com.mchange.v2" level="warn">
         </Logger>
         <Logger name="java.sql" level="warn">
-        </Logger>
-        <Logger name="io.fury" level="error"  includeLocation="true">
         </Logger>
         <!-- Root Logger -->
         <Root level="debug" includeLocation="true">

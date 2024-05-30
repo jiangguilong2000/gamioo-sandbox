@@ -94,7 +94,7 @@ dependencies {
     api 'org.apache.commons:commons-lang3:3.11';
     // utils collection
     api 'org.apache.commons:commons-collections4:4.4';
-    api 'org.furyio:fury-core:0.1.0'
+    api 'org.apache.fury:fury-core:0.5.1'
     api group: 'io.protostuff', name: 'protostuff-core', version: '1.8.0'
     api group: 'io.protostuff', name: 'protostuff-runtime', version: '1.8.0'
     api group: 'com.carrotsearch', name: 'java-sizeof', version: '0.0.5'
@@ -105,8 +105,10 @@ dependencies {
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.jmockit:jmockit:1.49'
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
+//    // This dependency is used by the application.
+    jmhImplementation 'com.google.guava:guava:32.0.0-jre'
+    jmhImplementation 'com.google.guava:failureaccess:1.0.1'
+    jmhImplementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
     // 保证jmh目录下java代码能顺利import其他main目录下等代码
     jmhImplementation project
     jmhImplementation 'org.openjdk.jmh:jmh-core:1.24'
