@@ -3,11 +3,11 @@ package io.gamioo.sandbox;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONB;
 import com.alibaba.fastjson2.JSONReader;
+import io.fury.config.Language;
 import io.gamioo.sandbox.util.MathUtils;
 import com.alibaba.fastjson2.JSONWriter;
 import com.carrotsearch.sizeof.RamUsageEstimator;
 import io.fury.Fury;
-import io.fury.Language;
 import io.fury.ThreadLocalFury;
 import io.fury.resolver.MetaContext;
 import io.gamioo.sandbox.util.FileUtils;
@@ -106,7 +106,6 @@ public class ProtoTest {
     @Order(3)
     public void handleFurySerialize() {
         bytes = fury.serializeJavaObject(skillFire_s2C_msg);
-
         long size = RamUsageEstimator.sizeOf(skillFire_s2C_msg);
         //   logger. info(bytes.length);
         // String size2 = RamUsageEstimator.humanReadableUnits(size);
