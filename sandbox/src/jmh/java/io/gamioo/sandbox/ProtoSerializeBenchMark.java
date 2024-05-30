@@ -1,15 +1,14 @@
 package io.gamioo.sandbox;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONB;
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.*;
 import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.github.houbb.data.factory.core.util.DataUtil;
+
+
 import io.fury.Fury;
 import io.fury.Language;
-
 import io.gamioo.sandbox.util.FileUtils;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openjdk.jmh.annotations.*;
@@ -34,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class ProtoSerializeBenchMark {
     private static final Logger logger = LogManager.getLogger(ProtoSerializeBenchMark.class);
-    private SkillFire_S2C_Msg  skillFire_s2C_msg = DataUtil.build(SkillFire_S2C_Msg.class);
+    private SkillFire_S2C_Msg skillFire_s2C_msg = DataUtil.build(SkillFire_S2C_Msg.class);
     private Fury fury;
 
     private Fury furyX;
@@ -42,9 +41,11 @@ public class ProtoSerializeBenchMark {
 
     @Setup
     public void init() {
+        JSONFactory.setDisableAutoType(true);
+        JSONFactory.setDisableReferenceDetect(true);
         try {
-          byte[]  array = FileUtils.getByteArrayFromFile("message.txt");
-            skillFire_s2C_msg= JSON.parseObject(array,SkillFire_S2C_Msg.class);
+            byte[] array = FileUtils.getByteArrayFromFile("message.txt");
+            skillFire_s2C_msg = JSON.parseObject(array, SkillFire_S2C_Msg.class);
             logger.info(skillFire_s2C_msg);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -58,22 +59,24 @@ public class ProtoSerializeBenchMark {
         furyX.register(SkillFire_S2C_Msg.class);
         furyX.register(SkillCategory.class);
         furyX.register(HarmDTO.class);
-       // String size = RamUsageEstimator.humanReadableUnits(RamUsageEstimator.sizeOf(skillFire_s2C_msg));
+        // String size = RamUsageEstimator.humanReadableUnits(RamUsageEstimator.sizeOf(skillFire_s2C_msg));
         logger.debug("size:{}", RamUsageEstimator.sizeOf(skillFire_s2C_msg));
     }
+
     @Benchmark
     public byte[] furySerialize() {
         return fury.serialize(skillFire_s2C_msg);
     }
+
     @Benchmark
     public byte[] furySerializeWithClassRegistrationAndNumberCompressed() {
         return furyX.serialize(skillFire_s2C_msg);
     }
+
     @Benchmark
     public byte[] jsonSerialize() {
         return JSONB.toBytes(skillFire_s2C_msg);
     }
-
 
 
     @Benchmark
@@ -83,24 +86,23 @@ public class ProtoSerializeBenchMark {
 
     @Benchmark
     public byte[] jsonSerializeWithBeanToArrayAndFieldBase() {
-        return JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray,JSONWriter.Feature.FieldBased);
+        return JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray, JSONWriter.Feature.FieldBased);
     }
+
     @Benchmark
     public byte[] protostuffSerialize() {
         return SerializingUtil.serialize(skillFire_s2C_msg);
     }
 
 
-
-
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(ProtoSerializeBenchMark.class.getSimpleName()).result("result.json")
                 .resultFormat(ResultFormatType.JSON)
-        //      .addProfiler(GCProfiler.class)
+                //      .addProfiler(GCProfiler.class)
 //                .addProfiler(CompilerProfiler.class)
 //                .verbosity(VerboseMode.EXTRA)
-               // .addProfiler(JavaFlightRecorderProfiler.class)
+                // .addProfiler(JavaFlightRecorderProfiler.class)
                 .build();
         new Runner(opt).run();
     }

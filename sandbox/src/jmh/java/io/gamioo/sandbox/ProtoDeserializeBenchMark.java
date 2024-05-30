@@ -1,14 +1,13 @@
 package io.gamioo.sandbox;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONB;
-import com.alibaba.fastjson2.JSONReader;
-import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.*;
 import com.carrotsearch.sizeof.RamUsageEstimator;
 import com.github.houbb.data.factory.core.util.DataUtil;
+
 import io.fury.Fury;
 import io.fury.Language;
 import io.gamioo.sandbox.util.FileUtils;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openjdk.jmh.annotations.*;
@@ -72,6 +71,8 @@ public class ProtoDeserializeBenchMark {
         furyArray = fury.serializeJavaObject(skillFire_s2C_msg);
         furyArrayX = furyX.serializeJavaObject(skillFire_s2C_msg);
         protoArray = SerializingUtil.serialize(skillFire_s2C_msg);
+        JSONFactory.setDisableAutoType(true);
+        JSONFactory.setDisableReferenceDetect(true);
         jsonArray = JSONB.toBytes(skillFire_s2C_msg);
         jsonArrayWithBeanToArray =JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray);
        // String size = RamUsageEstimator.humanReadableUnits(RamUsageEstimator.sizeOf(skillFire_s2C_msg));
