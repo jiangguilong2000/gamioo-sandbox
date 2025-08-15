@@ -2,6 +2,7 @@ package io.gamioo.sandbox;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONB;
+import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.protobuf.util.JsonFormat;
@@ -117,6 +118,15 @@ public class ProtoTest {
     }
 
 
+    @DisplayName("Json2 Deserialize with SupportArrayToBean")
+    @Test
+    @Order(3)
+    public void handleJson2Deserialize() {
+        SkillFire_S2C_Msg result = JSONB.parseObject(bytes, SkillFire_S2C_Msg.class, JSONReader.Feature.SupportArrayToBean);
+    }
+
+
+
 //    @DisplayName("ThreadLocalFury Serializable")
 //    @Test
 //    @Order(3)
@@ -143,7 +153,7 @@ public class ProtoTest {
 
     @DisplayName("Fury Serializable")
     @Test
-    @Order(3)
+    @Order(4)
     public void handleFurySerialize() {
         bytes = fury.serializeJavaObject(skillFire_s2C_msg);
         long size = GraphLayout.parseInstance(skillFire_s2C_msg).totalSize();
@@ -154,7 +164,7 @@ public class ProtoTest {
 
     @DisplayName("Fury Serializable with Number Compress")
     @Test
-    @Order(4)
+    @Order(5)
     public void handleFurySerializeWithCompress() {
         fury = Fory.builder().withLanguage(Language.JAVA)
                 .withRefTracking(true).requireClassRegistration(false).withNumberCompressed(true).build();
@@ -169,7 +179,7 @@ public class ProtoTest {
 
     @DisplayName("Fury Serializable with Number Compress and class register")
     @Test
-    @Order(5)
+    @Order(6)
     public void handleFurySerializeWithCompressAndRegister() {
 //.withDeserializeUnExistClassEnabled(true)
         fury = Fory.builder().withLanguage(Language.JAVA)
@@ -187,14 +197,14 @@ public class ProtoTest {
 
     @DisplayName("Fury Deserialize")
     @Test
-    @Order(6)
+    @Order(7)
     public void handleFuryDeserialize() {
         // logger. info( fury.deserializeJavaObject(bytes,SkillFire_S2C_Msg.class));
     }
 
     @DisplayName("Protostuff Serializable")
     @Test
-    @Order(7)
+    @Order(8)
     public void handleProtostuffSerialize() {
         bytes = SerializingUtil.serialize(skillFire_s2C_msg);
         long size = GraphLayout.parseInstance(skillFire_s2C_msg).totalSize();
@@ -203,7 +213,7 @@ public class ProtoTest {
 
     @DisplayName("Protostuff Deserialize")
     @Test
-    @Order(8)
+    @Order(9)
     public void handleProtostuffDeserialize() {
         logger.info(SerializingUtil.deserialize(bytes, SkillFire_S2C_Msg.class));
     }
@@ -211,7 +221,7 @@ public class ProtoTest {
 
     @DisplayName("Protobuf Serializable")
     @Test
-    @Order(9)
+    @Order(10)
     public void handleProtobufSerialize() {
         bytes = skillFire_s2C_msg_proto.toByteArray();
         long size = GraphLayout.parseInstance(skillFire_s2C_msg_proto).totalSize();
@@ -220,7 +230,7 @@ public class ProtoTest {
 
     @DisplayName("Protobuf Deserialize")
     @Test
-    @Order(10)
+    @Order(11)
     public void handleProtobufDeserialize() {
         try {
             // 反序列化Protobuf对象
@@ -234,7 +244,7 @@ public class ProtoTest {
 
     @DisplayName("FlatBuffers Serializable")
     @Test
-    @Order(11)
+    @Order(12)
     public void handleFlatBuffersSerialize() {
         ByteBuffer buffer = skillFire_s2C_msg_fbs.getByteBuffer();
         //      long attackerId = skillFire_s2C_msg_fbs.attackerId();
@@ -254,7 +264,7 @@ public class ProtoTest {
 
     @DisplayName("FlatBuffers Deserialize")
     @Test
-    @Order(12)
+    @Order(13)
     public void handleFlatBuffersDeserialize() {
         // 反序列化Protobuf对象
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -264,7 +274,7 @@ public class ProtoTest {
 
     @Test
     @DisplayName("手动填充 FlatBuffers 对象")
-    @Order(13)
+    @Order(14)
     public void handleManualFlatBuffersBuild() {
         // 创建 FlatBuffers Builder
         FlatBufferBuilder builder = new FlatBufferBuilder();
