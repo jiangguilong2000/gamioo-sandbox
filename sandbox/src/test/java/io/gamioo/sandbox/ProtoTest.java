@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 import org.openjdk.jol.info.GraphLayout;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
@@ -34,7 +33,7 @@ public class ProtoTest {
     private static byte[] bytes;
 
     @BeforeAll
-    public static void beforeAll() throws IOException {
+    public static void beforeAll() {
         try {
             byte[] array = FileUtils.getByteArrayFromFile("message.txt");
             skillFire_s2C_msg = JSON.parseObject(array, SkillFire_S2C_Msg.class);
@@ -207,7 +206,7 @@ public class ProtoTest {
         try {
             // 反序列化Protobuf对象
             Skill.SkillFire_S2C_Msg deserialized = Skill.SkillFire_S2C_Msg.parseFrom(bytes);
-//            logger.info("Protobuf Deserialize success: " + deserialized);
+            logger.info("Protobuf Deserialize success: " + deserialized);
         } catch (Exception e) {
             logger.error("Protobuf Deserialize failed: " + e.getMessage(), e);
         }
