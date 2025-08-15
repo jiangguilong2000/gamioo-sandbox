@@ -19,6 +19,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jol.info.GraphLayout;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +37,8 @@ public class ProtoDeserializeBenchMark {
     private SkillFire_S2C_Msg  skillFire_s2C_msg = DataUtil.build(SkillFire_S2C_Msg.class);
 
     private static Skill.SkillFire_S2C_Msg skillFire_s2C_msg_proto;
+
+    private static io.gamioo.sandbox.fbs.SkillFire_S2C_Msg skillFire_s2C_msg_fbs;
     private Fory fury;
 
     private Fory furyX;
@@ -50,6 +53,9 @@ public class ProtoDeserializeBenchMark {
     private byte[] jsonArrayWithBeanToArray;
 
     private byte[] protobufArray;
+
+    private byte[] flatBuffersArray;
+
 
 
     @Setup
@@ -99,6 +105,23 @@ public class ProtoDeserializeBenchMark {
             }
         }
 
+        {
+            try {
+                byte[] array = FileUtils.getByteArrayFromFile("message.bin");
+                // 1. 将字节数组包装成 ByteBuffer
+                ByteBuffer buffer = ByteBuffer.wrap(array);
+                skillFire_s2C_msg_fbs = io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
+                // 将 ByteBuffer 转换为字节数组
+                flatBuffersArray = array;
+               long size = GraphLayout.parseInstance(skillFire_s2C_msg_fbs).totalSize();
+                logger.info("flatBuffers java bean size:{}", size);
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+        }
+
     }
 
     @Benchmark
@@ -140,6 +163,13 @@ public class ProtoDeserializeBenchMark {
     @Benchmark
     public void protobufDeserialize(Blackhole blackhole) throws InvalidProtocolBufferException {
         Skill.SkillFire_S2C_Msg deserialized = Skill.SkillFire_S2C_Msg.parseFrom(protobufArray);
+        blackhole.consume(deserialized);
+    }
+
+    @Benchmark
+    public void flatBuffersDeserialize(Blackhole blackhole) {
+        ByteBuffer buffer = ByteBuffer.wrap(flatBuffersArray);
+        io.gamioo.sandbox.fbs.SkillFire_S2C_Msg deserialized = io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
         blackhole.consume(deserialized);
     }
 

@@ -1,0 +1,25 @@
+// 定义命名空间，对应 Java 的 package
+namespace io.gamioo.sandbox.fbs;
+
+// Harm 对象结构
+table Harm {
+  target_id:long;
+  cur_hp:double;
+  max_hp:double;
+  real:int;
+  type:byte; // type 的值看起来不大，用 byte 节省空间
+  value:double;
+  dead:bool;
+}
+
+// 根消息类型 SkillFire_S2C_Msg
+table SkillFire_S2C_Msg {
+  attacker_id:long;
+  index:byte; // index 的值 37，用 byte 即可
+  skill_category:string;
+  harm_list:[Harm]; // 一个 Harm 对象的数组/向量
+  param1:[int]; // 一个整型数组/向量
+}
+
+// 指定根类型，这对于某些应用场景（如文件存储）是必需的
+root_type SkillFire_S2C_Msg;

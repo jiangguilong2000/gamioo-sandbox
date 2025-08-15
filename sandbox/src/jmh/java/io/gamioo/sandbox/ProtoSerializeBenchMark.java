@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.JSONWriter;
 import com.github.houbb.data.factory.core.util.DataUtil;
 import com.google.protobuf.util.JsonFormat;
+import io.gamioo.sandbox.fbs.Harm;
 import io.gamioo.sandbox.proto.Skill;
 import io.gamioo.sandbox.util.FileUtils;
 import org.apache.fory.Fory;
@@ -21,6 +22,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jol.info.GraphLayout;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +40,8 @@ public class ProtoSerializeBenchMark {
     private SkillFire_S2C_Msg skillFire_s2C_msg = DataUtil.build(SkillFire_S2C_Msg.class);
 
     private static Skill.SkillFire_S2C_Msg skillFire_s2C_msg_proto;
+
+    private static io.gamioo.sandbox.fbs.SkillFire_S2C_Msg skillFire_s2C_msg_fbs;
 
     private Fory fury;
     private Fory furyX;
@@ -82,6 +86,24 @@ public class ProtoSerializeBenchMark {
                 logger.error(e.getMessage(), e);
             }
         }
+
+
+        {
+            try {
+                byte[] array = FileUtils.getByteArrayFromFile("message.bin");
+                // 1. 将字节数组包装成 ByteBuffer
+                ByteBuffer buffer = ByteBuffer.wrap(array);
+                skillFire_s2C_msg_fbs = io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
+                // 将 ByteBuffer 转换为字节数组
+
+                long size = GraphLayout.parseInstance(skillFire_s2C_msg_fbs).totalSize();
+                logger.info("flatBuffers java bean size:{}", size);
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+
+        }
     }
 
     @Benchmark
@@ -124,6 +146,14 @@ public class ProtoSerializeBenchMark {
     public void protobufSerialize(Blackhole blackhole) {
         byte[] result = skillFire_s2C_msg_proto.toByteArray();
         blackhole.consume(result);
+    }
+
+    @Benchmark
+    public void flatBuffersSerialize(Blackhole blackhole) {
+        ByteBuffer buffer = skillFire_s2C_msg_fbs.getByteBuffer();
+        // 将 ByteBuffer 转换为字节数组
+        byte[]  bytes = buffer.array();
+        blackhole.consume(bytes);
     }
 
     public static void main(String[] args) throws RunnerException {

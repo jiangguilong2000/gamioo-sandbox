@@ -98,6 +98,10 @@ dependencies {
     api 'com.google.guava:guava:33.4.8-jre'
     api 'com.google.guava:failureaccess:1.0.3'
     api 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
+
+    //flatbuffers
+    api 'com.google.flatbuffers:flatbuffers-java:25.2.10'
     // jetbrain
     implementation group: 'org.jetbrains', name: 'annotations', version: '26.0.2'
     //Junit5
