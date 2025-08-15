@@ -234,7 +234,7 @@ public class ProtoTest {
     public void handleProtobufDeserialize() {
         try {
             // 反序列化Protobuf对象
-            Skill.SkillFire_S2C_Msg deserialized = Skill.SkillFire_S2C_Msg.parseFrom(bytes);
+            Skill.SkillFire_S2C_Msg.parseFrom(bytes);
        //     logger.info("Protobuf Deserialize success: " + deserialized);
         } catch (Exception e) {
             logger.error("Protobuf Deserialize failed: " + e.getMessage(), e);
