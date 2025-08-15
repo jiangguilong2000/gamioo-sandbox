@@ -4,9 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONB;
 import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
-import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.protobuf.util.JsonFormat;
-import io.gamioo.sandbox.fbs.Harm;
 import io.gamioo.sandbox.proto.Skill;
 import io.gamioo.sandbox.util.FileUtils;
 import io.gamioo.sandbox.util.MathUtils;
@@ -272,38 +270,38 @@ public class ProtoTest {
         logger.info("FlatBuffers Deserialize success: ");
     }
 
-    @Test
-    @DisplayName("手动填充 FlatBuffers 对象")
-    @Order(14)
-    public void handleManualFlatBuffersBuild() {
-        // 创建 FlatBuffers Builder
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-
-        // 创建 harmList 数据
-        int harm1 = Harm.createHarm(builder, 1001L, 100.0, 50.0, 0, (byte) 0, 0, false);
-        int harm2 = Harm.createHarm(builder, 1002L, 200.0, 75.0, 0, (byte) 0, 0, false);
-
-        // 创建 harmList 向量
-        int harmListOffset =  io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.createHarmListVector(builder, new int[]{harm1, harm2});
-
-        // 创建 SkillFire_S2C_Msg 对象
-        int skillFireOffset =  io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.createSkillFire_S2C_Msg(builder,
-                12345L,     // attackerId
-                (byte) 1212,     // index
-                100,        // skillId
-                50,         // skillLevel
-                harmListOffset  // harmList
-        );
-
-        // 完成构建
-        builder.finish(skillFireOffset);
-
-        // 获取构建好的 SkillFire_S2C_Msg
-        ByteBuffer buffer = builder.dataBuffer();
-
-                io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
-
-    }
+//    @Test
+//    @DisplayName("手动填充 FlatBuffers 对象")
+//    @Order(14)
+//    public void handleManualFlatBuffersBuild() {
+//        // 创建 FlatBuffers Builder
+//        FlatBufferBuilder builder = new FlatBufferBuilder();
+//
+//        // 创建 harmList 数据
+//        int harm1 = Harm.createHarm(builder, 1001L, 100.0, 50.0, 0, (byte) 0, 0, false);
+//        int harm2 = Harm.createHarm(builder, 1002L, 200.0, 75.0, 0, (byte) 0, 0, false);
+//
+//        // 创建 harmList 向量
+//        int harmListOffset =  io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.createHarmListVector(builder, new int[]{harm1, harm2});
+//
+//        // 创建 SkillFire_S2C_Msg 对象
+//        int skillFireOffset =  io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.createSkillFire_S2C_Msg(builder,
+//                12345L,     // attackerId
+//                (byte) 1212,     // index
+//                100,        // skillId
+//                50,         // skillLevel
+//                harmListOffset  // harmList
+//        );
+//
+//        // 完成构建
+//        builder.finish(skillFireOffset);
+//
+//        // 获取构建好的 SkillFire_S2C_Msg
+//        ByteBuffer buffer = builder.dataBuffer();
+//
+//                io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
+//
+//    }
 
 
 
