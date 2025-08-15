@@ -1,0 +1,21 @@
+syntax = "proto3";
+option java_package = "io.gamioo.sandbox.proto";
+// 主消息体
+message SkillFire_S2C_Msg {
+  int32 attackerId = 1;
+  repeated Harm harmList = 2;
+  int32 index = 3;
+  repeated int32 param1 = 4;
+  string skillCategory = 5;
+}
+
+// 伤害信息
+message Harm {
+  float curHp = 1;
+  bool dead = 2;
+  float maxHp = 3;
+  int32 real = 4;
+  int32 targetId = 5;
+  int32 type = 6;
+  float value = 7;
+}

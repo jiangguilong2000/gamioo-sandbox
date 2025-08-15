@@ -2,13 +2,22 @@ package io.gamioo.sandbox;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
+import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 序列化和反序列化工具类
  * @author Allen Jiang
  */
 public class SerializingUtil {
+
+    // 使用缓存避免重复创建RuntimeSchema
+    private static final ConcurrentHashMap<Class<?>, Schema<?>> SCHEMA_CACHE = new ConcurrentHashMap<>();
+
+    // 使用ThreadLocal避免频繁创建LinkedBuffer
+    private static final ThreadLocal<LinkedBuffer> BUFFER_THREAD_LOCAL = ThreadLocal.withInitial(
+            () -> LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
 
     /**
      * 将目标类序列化为byte数组
@@ -18,22 +27,20 @@ public class SerializingUtil {
      * @return
      */
     public static <T> byte[] serialize(T source) {
-        RuntimeSchema<T> schema;
-        LinkedBuffer buffer = null;
-        byte[] result;
-        try {
-            schema = RuntimeSchema.createFrom((Class<T>) source.getClass());
-            buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
-            result = ProtostuffIOUtil.toByteArray(source, schema, buffer);
-        } catch (Exception e) {
-            throw new RuntimeException("serialize exception");
-        } finally {
-            if (buffer != null) {
-                buffer.clear();
-            }
+        if (source == null) {
+            return null;
         }
 
-        return result;
+        @SuppressWarnings("unchecked")
+        Class<T> clazz = (Class<T>) source.getClass();
+        Schema<T> schema = getSchema(clazz);
+        LinkedBuffer buffer = BUFFER_THREAD_LOCAL.get();
+
+        try {
+            return ProtostuffIOUtil.toByteArray(source, schema, buffer);
+        } finally {
+            buffer.clear();
+        }
     }
 
     /**
@@ -45,16 +52,29 @@ public class SerializingUtil {
      * @return
      */
     public static <T> T deserialize(byte[] source, Class<T> typeClass) {
-        RuntimeSchema<T> schema;
-        T newInstance;
-        try {
-            schema = RuntimeSchema.createFrom(typeClass);
-            newInstance = typeClass.newInstance();
-            ProtostuffIOUtil.mergeFrom(source, newInstance, schema);
-        } catch (Exception e) {
-            throw new RuntimeException("deserialize exception");
+        if (source == null || typeClass == null) {
+            return null;
         }
 
+        Schema<T> schema = getSchema(typeClass);
+        T newInstance;
+        try {
+            newInstance = typeClass.getDeclaredConstructor().newInstance();
+            ProtostuffIOUtil.mergeFrom(source, newInstance, schema);
+        } catch (Exception e) {
+            throw new RuntimeException("deserialize exception", e);
+        }
         return newInstance;
+    }
+
+    /**
+     * 获取类的RuntimeSchema，如果不存在则创建并缓存
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> Schema<T> getSchema(Class<T> clazz) {
+        return (Schema<T>) SCHEMA_CACHE.computeIfAbsent(clazz, RuntimeSchema::createFrom);
     }
 }

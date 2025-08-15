@@ -1,26 +1,27 @@
 package io.gamioo.sandbox;
 
-import com.alibaba.fastjson2.*;
-import com.carrotsearch.sizeof.RamUsageEstimator;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONB;
+import com.alibaba.fastjson2.JSONFactory;
+import com.alibaba.fastjson2.JSONWriter;
 import com.github.houbb.data.factory.core.util.DataUtil;
-
-
-
+import com.google.protobuf.util.JsonFormat;
+import io.gamioo.sandbox.proto.Skill;
 import io.gamioo.sandbox.util.FileUtils;
-
-import org.apache.fury.Fury;
-import org.apache.fury.config.Language;
+import org.apache.fory.Fory;
+import org.apache.fory.config.Language;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.profile.*;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.VerboseMode;
+import org.openjdk.jol.info.GraphLayout;
 
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,15 +36,17 @@ import java.util.concurrent.TimeUnit;
 public class ProtoSerializeBenchMark {
     private static final Logger logger = LogManager.getLogger(ProtoSerializeBenchMark.class);
     private SkillFire_S2C_Msg skillFire_s2C_msg = DataUtil.build(SkillFire_S2C_Msg.class);
-    private Fury fury;
 
-    private Fury furyX;
+    private static Skill.SkillFire_S2C_Msg skillFire_s2C_msg_proto;
 
+    private Fory fury;
+    private Fory furyX;
 
     @Setup
     public void init() {
         JSONFactory.setDisableAutoType(true);
         JSONFactory.setDisableReferenceDetect(true);
+
         try {
             byte[] array = FileUtils.getByteArrayFromFile("message.txt");
             skillFire_s2C_msg = JSON.parseObject(array, SkillFire_S2C_Msg.class);
@@ -52,58 +55,81 @@ public class ProtoSerializeBenchMark {
             logger.error(e.getMessage(), e);
         }
 
-        fury = Fury.builder().withLanguage(Language.JAVA)
+        fury = Fory.builder().withLanguage(Language.JAVA)
                 .withRefTracking(true).requireClassRegistration(false).build();
 
-        furyX = Fury.builder().withLanguage(Language.JAVA)
+        furyX = Fory.builder().withLanguage(Language.JAVA)
                 .withRefTracking(false).requireClassRegistration(true).withNumberCompressed(true).build();
         furyX.register(SkillFire_S2C_Msg.class);
         furyX.register(SkillCategory.class);
         furyX.register(HarmDTO.class);
-        // String size = RamUsageEstimator.humanReadableUnits(RamUsageEstimator.sizeOf(skillFire_s2C_msg));
-        logger.debug("size:{}", RamUsageEstimator.sizeOf(skillFire_s2C_msg));
+
+        logger.debug("size:{}", GraphLayout.parseInstance(skillFire_s2C_msg).totalSize());
+
+        {
+            try {
+                // 读取message.txt中的JSON数据
+                byte[] array = FileUtils.getByteArrayFromFile("message.txt");
+                String jsonString = new String(array, StandardCharsets.UTF_8);
+
+                // 使用Protobuf的JsonFormat解析器
+                Skill.SkillFire_S2C_Msg.Builder builder = Skill.SkillFire_S2C_Msg.newBuilder();
+                JsonFormat.parser().ignoringUnknownFields().merge(jsonString, builder);
+                skillFire_s2C_msg_proto = builder.build();
+                long size = GraphLayout.parseInstance(skillFire_s2C_msg_proto).totalSize();
+                logger.info("protobuf size:{}", size);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
     }
 
     @Benchmark
-    public byte[] furySerialize() {
-        return fury.serialize(skillFire_s2C_msg);
+    public void furySerialize(Blackhole blackhole) {
+        byte[] result = fury.serialize(skillFire_s2C_msg);
+        blackhole.consume(result);
     }
 
     @Benchmark
-    public byte[] furySerializeWithClassRegistrationAndNumberCompressed() {
-        return furyX.serialize(skillFire_s2C_msg);
+    public void furySerializeWithClassRegistrationAndNumberCompressed(Blackhole blackhole) {
+        byte[] result = furyX.serialize(skillFire_s2C_msg);
+        blackhole.consume(result);
     }
 
     @Benchmark
-    public byte[] jsonSerialize() {
-        return JSONB.toBytes(skillFire_s2C_msg);
-    }
-
-
-    @Benchmark
-    public byte[] jsonSerializeWithBeanToArray() {
-        return JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray);
+    public void jsonSerialize(Blackhole blackhole) {
+        byte[] result = JSONB.toBytes(skillFire_s2C_msg);
+        blackhole.consume(result);
     }
 
     @Benchmark
-    public byte[] jsonSerializeWithBeanToArrayAndFieldBase() {
-        return JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray, JSONWriter.Feature.FieldBased);
+    public void jsonSerializeWithBeanToArray(Blackhole blackhole) {
+        byte[] result = JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray);
+        blackhole.consume(result);
     }
 
     @Benchmark
-    public byte[] protostuffSerialize() {
-        return SerializingUtil.serialize(skillFire_s2C_msg);
+    public void jsonSerializeWithBeanToArrayAndFieldBase(Blackhole blackhole) {
+        byte[] result = JSONB.toBytes(skillFire_s2C_msg, JSONWriter.Feature.BeanToArray, JSONWriter.Feature.FieldBased);
+        blackhole.consume(result);
     }
 
+    @Benchmark
+    public void protostuffSerialize(Blackhole blackhole) {
+        byte[] result = SerializingUtil.serialize(skillFire_s2C_msg);
+        blackhole.consume(result);
+    }
+
+    @Benchmark
+    public void protobufSerialize(Blackhole blackhole) {
+        byte[] result = skillFire_s2C_msg_proto.toByteArray();
+        blackhole.consume(result);
+    }
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(ProtoSerializeBenchMark.class.getSimpleName()).result("result.json")
                 .resultFormat(ResultFormatType.JSON)
-                //      .addProfiler(GCProfiler.class)
-//                .addProfiler(CompilerProfiler.class)
-//                .verbosity(VerboseMode.EXTRA)
-                // .addProfiler(JavaFlightRecorderProfiler.class)
                 .build();
         new Runner(opt).run();
     }
