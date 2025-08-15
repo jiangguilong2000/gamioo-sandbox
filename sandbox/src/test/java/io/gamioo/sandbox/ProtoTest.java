@@ -122,7 +122,7 @@ public class ProtoTest {
     @Test
     @Order(3)
     public void handleJson2Deserialize() {
-        SkillFire_S2C_Msg result = JSONB.parseObject(bytes, SkillFire_S2C_Msg.class, JSONReader.Feature.SupportArrayToBean);
+        JSONB.parseObject(bytes, SkillFire_S2C_Msg.class, JSONReader.Feature.SupportArrayToBean);
     }
 
 
@@ -268,7 +268,7 @@ public class ProtoTest {
     public void handleFlatBuffersDeserialize() {
         // 反序列化Protobuf对象
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        io.gamioo.sandbox.fbs.SkillFire_S2C_Msg deserialized = io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
+        io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
         logger.info("FlatBuffers Deserialize success: ");
     }
 
@@ -300,7 +300,7 @@ public class ProtoTest {
 
         // 获取构建好的 SkillFire_S2C_Msg
         ByteBuffer buffer = builder.dataBuffer();
-        io.gamioo.sandbox.fbs.SkillFire_S2C_Msg skillFireMsg =
+
                 io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
 
     }
