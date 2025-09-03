@@ -87,7 +87,7 @@ dependencies {
     api 'org.apache.commons:commons-collections4:4.5.0'
     api group: 'com.carrotsearch', name: 'java-sizeof', version: '0.0.5'
 
-    api 'org.apache.fory:fory-core:0.11.2'
+    api 'org.apache.fory:fory-core:0.12.1'
     api group: 'io.protostuff', name: 'protostuff-core', version: '1.8.0'
     api group: 'io.protostuff', name: 'protostuff-runtime', version: '1.8.0'
     api 'com.google.protobuf:protobuf-java:4.32.0'
