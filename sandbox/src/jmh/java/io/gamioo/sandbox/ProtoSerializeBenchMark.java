@@ -147,7 +147,7 @@ public class ProtoSerializeBenchMark {
         blackhole.consume(result);
     }
 
-    @Benchmark
+
     public void flatBuffersSerialize(Blackhole blackhole) {
         ByteBuffer buffer = skillFire_s2c_msg_fbs.getByteBuffer();
         // 将 ByteBuffer 转换为字节数组

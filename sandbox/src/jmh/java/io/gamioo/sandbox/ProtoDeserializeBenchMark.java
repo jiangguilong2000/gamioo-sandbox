@@ -166,7 +166,8 @@ public class ProtoDeserializeBenchMark {
         blackhole.consume(deserialized);
     }
 
-    @Benchmark
+
+
     public void flatBuffersDeserialize(Blackhole blackhole) {
         ByteBuffer buffer = ByteBuffer.wrap(flatBuffersArray);
         io.gamioo.sandbox.fbs.SkillFire_S2C_Msg deserialized = io.gamioo.sandbox.fbs.SkillFire_S2C_Msg.getRootAsSkillFire_S2C_Msg(buffer);
