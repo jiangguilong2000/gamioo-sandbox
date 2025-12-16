@@ -16,7 +16,7 @@ group = 'io.gamioo'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21) // 保持项目编译目标为 JDK 21
+        languageVersion = JavaLanguageVersion.of(25) // 保持项目编译目标为 JDK 21
     }
 }
 
@@ -86,7 +86,7 @@ dependencies {
     api 'org.openjdk.jol:jol-core:0.17'
     api 'org.apache.commons:commons-collections4:4.5.0'
     api group: 'com.carrotsearch', name: 'java-sizeof', version: '0.0.5'
-
+    api 'io.netty:netty-all:4.1.63.Final'
     api 'org.apache.fory:fory-core:0.12.2'
     api group: 'io.protostuff', name: 'protostuff-core', version: '1.8.0'
     api group: 'io.protostuff', name: 'protostuff-runtime', version: '1.8.0'
@@ -99,6 +99,8 @@ dependencies {
     api 'com.google.guava:failureaccess:1.0.3'
     api 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
+    implementation 'com.yomahub:roguemap:1.0.0-BETA2'
+    implementation 'com.esotericsoftware:kryo:5.6.2'
 
     //flatbuffers
     api 'com.google.flatbuffers:flatbuffers-java:25.2.10'
@@ -165,6 +167,25 @@ tasks.register('testReport', TestReport) {
 }
 
 repositories {
-    //腾讯云的国内镜像
-    maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public' }
+    // 私有 Nexus 仓库
+//    maven {
+//        name = 'PrivateNexus'
+//        url = uri('http://10.10.40.114:8081/repository/maven-public/')
+//        credentials {
+//            username = project.findProperty('nexusUsername') ?: System.getenv('NEXUS_USERNAME')
+//            password = project.findProperty('nexusPassword') ?: System.getenv('NEXUS_PASSWORD')
+//        }
+//        // 允许不安全的HTTP连接（如果使用HTTP而非HTTPS）
+//        allowInsecureProtocol = true
+//    }
+    // 腾讯云的国内镜像
+    maven {
+        url = uri('https://mirrors.cloud.tencent.com/nexus/repository/maven-public')
+    }
+    // 阿里云镜像作为备用
+    maven {
+        url = uri('https://maven.aliyun.com/repository/public')
+    }
+    // Maven中央仓库
+    mavenCentral()
 }
